@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const asyncErrorWrapper = require("express-async-handler");
+const sendJwtToClient = require("../helpers/auth/sendJwtToClient");
 
 const register = asyncErrorWrapper(async (req, res, next) => {
   //post Data (req.body)
@@ -17,10 +18,14 @@ const register = asyncErrorWrapper(async (req, res, next) => {
     role,
   });
 
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
+  // const token = user.generateJwtFromUser();
+  // console.log(token);
+
+  // res.status(200).json({
+  //   success: true,
+  //   data: user,
+  // });
+  sendJwtToClient(user, res);
 });
 
 module.exports = {
