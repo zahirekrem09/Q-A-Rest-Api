@@ -1,6 +1,7 @@
 const User = require("../models/User");
+const asyncErrorWrapper = require("express-async-handler");
 
-const register = async (req, res, next) => {
+const register = asyncErrorWrapper(async (req, res, next) => {
   //post Data
   const name = "Ekrem";
   const email = "ekrem@gmail.com";
@@ -18,7 +19,7 @@ const register = async (req, res, next) => {
     success: true,
     data: user,
   });
-};
+});
 
 module.exports = {
   register,
