@@ -15,6 +15,8 @@ dotenv.config({
 connectDatabase();
 
 const app = express();
+//Express Body Parser midd.
+app.use(express.json());
 
 const PORT = process.env.PORT;
 
