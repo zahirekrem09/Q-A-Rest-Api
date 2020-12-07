@@ -65,6 +65,24 @@ const logout = asyncErrorWrapper(async (req, res, next) => {
       message: "Logout Successfull",
     });
 });
+//TODO: TypeError: Cannot read property 'id' of undefined
+const imageUpload = asyncErrorWrapper(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      profile_image: req.savedProfileImage,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  res.json({
+    success: true,
+    message: "Upload Successfull",
+    data: user,
+  });
+});
 
 // const tokenTest = (req, res, next) => {
 //   res.json({
@@ -86,6 +104,7 @@ module.exports = {
   register,
   login,
   logout,
+  imageUpload,
   // tokenTest,
   getUser,
 };
