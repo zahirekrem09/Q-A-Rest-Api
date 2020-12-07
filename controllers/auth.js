@@ -5,6 +5,7 @@ const validateUserInput = require("../helpers/auth/inputHelpers");
 const sendEmail = require("../helpers/auth/sendEmail");
 const comparePassword = require("../helpers/auth/comparePassword");
 const CustomError = require("../helpers/error/CustomError");
+const { findByIdAndUpdate } = require("../models/User");
 
 const register = asyncErrorWrapper(async (req, res, next) => {
   //post Data (req.body)
@@ -154,6 +155,18 @@ const resetPassword = asyncErrorWrapper(async (req, res, next) => {
   return res.json({ success: true, message: "Reset Password Successful" });
 });
 
+const editProfile = asyncErrorWrapper(async (req, res, next) => {
+  const editInfo = req.body;
+
+  const user = await User.findByIdAndUpdate(req.user.id, editInfo, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
 const getUser = (req, res, next) => {
   res.json({
     success: true,
@@ -171,6 +184,7 @@ module.exports = {
   imageUpload,
   forgotPassword,
   resetPassword,
+  editProfile,
   // tokenTest,
   getUser,
 };
