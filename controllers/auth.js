@@ -2,6 +2,7 @@ const User = require("../models/User");
 const asyncErrorWrapper = require("express-async-handler");
 const { sendJwtToClient } = require("../helpers/auth/JwtTokenHelpers");
 const validateUserInput = require("../helpers/auth/inputHelpers");
+const sendEmail = require("../helpers/auth/sendEmail");
 const comparePassword = require("../helpers/auth/comparePassword");
 const CustomError = require("../helpers/error/CustomError");
 
@@ -84,12 +85,75 @@ const imageUpload = asyncErrorWrapper(async (req, res, next) => {
   });
 });
 
-// const tokenTest = (req, res, next) => {
-//   res.json({
-//     success: true,
-//     message: "Welcome Api",
-//   });
-// };
+const forgotPassword = asyncErrorWrapper(async (req, res, next) => {
+  const resetEmail = req.body.email;
+  const user = await User.findOne({ email: resetEmail });
+  if (!user) {
+    next(new CustomError("There is no user with that email", 400));
+  }
+
+  const resetPassToken = user.getResetPasswordToken();
+
+  await user.save();
+
+  const resetPassUrl = `http://localhost:5000/api/auth/resetpassword?resetPasswordToken=${user.resetPasswordToken}`;
+
+  const emailTemplate = `
+  <h3>Reset Your Password</h3>
+
+  <p>This <a href="${resetPassUrl}" target = '_blank'>This click Link</a> will expire in 1 hour </p>
+
+  `;
+
+  try {
+    await sendEmail({
+      from: process.env.SMTP_USER,
+      to: resetEmail,
+      subject: "Reset Your  Password ",
+      html: emailTemplate,
+    });
+    res.json({
+      success: true,
+      message: "Token Sent To Your Email",
+      // data: user,
+    });
+  } catch (error) {
+    user.resetPasswordToken = null;
+    user.resetPasswordExpire = null;
+
+    await user.save();
+
+    return next(new CustomError("Email Could not be sent", 500));
+  }
+});
+
+const resetPassword = asyncErrorWrapper(async (req, res, next) => {
+  const { resetPasswordToken } = req.query;
+  const { password } = req.body;
+
+  if (!resetPasswordToken) {
+    return next(new CustomError("Please provide a valid token", 400));
+  }
+
+  let user = await User.findOne({
+    resetPasswordToken: resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new CustomError("Invalid token or session expired", 404));
+  }
+
+  user.password = password;
+
+  user.resetPasswordToken = null;
+  user.resetPasswordExpire = null;
+
+  await user.save();
+
+  return res.json({ success: true, message: "Reset Password Successful" });
+});
+
 const getUser = (req, res, next) => {
   res.json({
     success: true,
@@ -105,6 +169,8 @@ module.exports = {
   login,
   logout,
   imageUpload,
+  forgotPassword,
+  resetPassword,
   // tokenTest,
   getUser,
 };
