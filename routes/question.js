@@ -9,6 +9,7 @@ const {
   getSingleQuestion,
   editQuestion,
   deleteQuestion,
+  likeQuestion,
 } = require("../controllers/question");
 
 const router = express.Router();
@@ -26,5 +27,7 @@ router.delete(
   [getAccessToRoute, checkQuestionExist, getQuestionOwnerAccess],
   deleteQuestion
 );
+
+router.get("/:id/like", [getAccessToRoute, checkQuestionExist], likeQuestion);
 
 module.exports = router;
