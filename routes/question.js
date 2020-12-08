@@ -1,11 +1,13 @@
 const express = require("express");
 const getAccessToRoute = require("../middlewares/auth/getAccessToRoute");
+const getQuestionOwnerAccess = require("../middlewares/auth/getQuestionOwnerAccess");
 const checkQuestionExist = require("../middlewares/db/checkQuestionExist");
 
 const {
   askNewQuestions,
   getAllQuestions,
   getSingleQuestion,
+  editQuestion,
 } = require("../controllers/question");
 
 const router = express.Router();
@@ -13,5 +15,10 @@ const router = express.Router();
 router.get("/", getAllQuestions);
 router.post("/ask", getAccessToRoute, askNewQuestions);
 router.get("/:id", checkQuestionExist, getSingleQuestion);
+router.put(
+  "/:id/edit",
+  [getAccessToRoute, checkQuestionExist, getQuestionOwnerAccess],
+  editQuestion
+);
 
 module.exports = router;
