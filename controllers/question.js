@@ -16,6 +16,16 @@ const askNewQuestions = asyncErrorWrapper(async (req, res, next) => {
   });
 });
 
+const getAllQuestions = asyncErrorWrapper(async (req, res, next) => {
+  const questions = await Question.find();
+
+  res.status(200).json({
+    success: true,
+    data: questions,
+  });
+});
+
 module.exports = {
   askNewQuestions,
+  getAllQuestions,
 };
