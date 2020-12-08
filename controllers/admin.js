@@ -19,9 +19,9 @@ const blockUser = asyncErrorWrapper(async (req, res, next) => {
 const deleteUser = asyncErrorWrapper(async (req, res, next) => {
   const { id } = req.params;
   const user = await User.findById(id);
-
-  user.blocked = !user.blocked;
-
+  if (!user) {
+    return next(new CustomError("There is no such with that id", 400));
+  }
   await user.remove();
 
   return res.status(200).json({

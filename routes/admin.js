@@ -9,7 +9,7 @@ const router = express.Router();
 router.use([getAccessToRoute, getAdminAccess]);
 
 router.get("/block/:id", checkUserExist, blockUser);
-router.delete("/delete/:id", checkUserExist, deleteUser);
+router.delete("/delete/:id", deleteUser);
 // router.get("/", (req, res, next) => {
 //   res.status(200).json({
 //     success: true,
