@@ -11,7 +11,7 @@
     "role": "admin",
     "name": "Ekrem SARI",
     "email": "ekremsari.090909@gmail.com",
-    "password": "123456"
+    "password": "1234567"
   },
   {
     "_id": "5e300f0ffbb6b05ee9037fd2",
@@ -23,15 +23,15 @@
   {
     "_id": "5e2effcccbdf585842cdb6ce",
     "role": "user",
-    "name": "Elif Toprak",
-    "email": "eliftoprak12121212@gmail.com",
+    "name": "Adem Toprak",
+    "email": "ademtoprak12121212@gmail.com",
     "password": "123456"
   },
   {
     "_id": "5e302931752a052e11096e96",
     "role": "user",
-    "name": "Özge Taşçı",
-    "email": "ozgetasci12121212@gmail.com",
+    "name": "Kemal Taşçı",
+    "email": "kemaltasci12121212@gmail.com",
     "password": "123456"
   }
 ]
