@@ -1,4 +1,5 @@
 const express = require("express");
+const answer = require("./answer");
 const getAccessToRoute = require("../middlewares/auth/getAccessToRoute");
 const getQuestionOwnerAccess = require("../middlewares/auth/getQuestionOwnerAccess");
 const checkQuestionExist = require("../middlewares/db/checkQuestionExist");
@@ -35,5 +36,7 @@ router.get(
   [getAccessToRoute, checkQuestionExist],
   undoLikeQuestion
 );
+
+router.use("/:question_id/answers", checkQuestionExist, answer);
 
 module.exports = router;
