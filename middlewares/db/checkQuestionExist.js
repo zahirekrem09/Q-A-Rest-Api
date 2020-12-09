@@ -5,7 +5,7 @@ const CustomError = require("../../helpers/error/CustomError");
 const checkQuestionExist = asyncErrorWrapper(async (req, res, next) => {
   const question_id = req.params.id || req.params.question_id;
 
-  console.log(question_id);
+  // console.log(question_id);
   const question = await Question.findById(question_id);
 
   if (!question) {
