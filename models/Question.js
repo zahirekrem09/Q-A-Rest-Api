@@ -29,6 +29,12 @@ const QuestionSchema = new Schema({
     ref: "User",
   },
   likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+  answer: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Answer",
+    },
+  ],
 });
 
 //Methods
