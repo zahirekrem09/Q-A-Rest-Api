@@ -71,9 +71,69 @@ const editAnswer = asyncErrorWrapper(async (req, res, next) => {
   });
 });
 
+const deleteAnswer = asyncErrorWrapper(async (req, res, next) => {
+  const { answer_id } = req.params;
+  const { question_id } = req.params;
+
+  await Answer.findByIdAndRemove(answer_id);
+  const question = await Question.findById(question_id);
+  //   const filterAnswers = question.answers.filter(
+  //     (answer) => answer === answer_id
+  //   );
+  question.answers.splice(question.answers.indexOf(answer_id), 1);
+
+  await question.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Amswer delete succesfull",
+    data: question.answers,
+  });
+});
+
+const likeAnswer = asyncErrorWrapper(async (req, res, next) => {
+  const { answer_id } = req.params;
+
+  let answer = await Answer.findById(answer_id);
+
+  if (answer.likes.includes(req.user.id)) {
+    return next(new CustomError("You already liked this answer", 400));
+  }
+  answer.likes.push(req.user.id);
+  await answer.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Liked operations successfull",
+    data: answer,
+  });
+});
+
+const undoLikeAnswer = asyncErrorWrapper(async (req, res, next) => {
+  const { answer_id } = req.params;
+
+  let answer = await Answer.findById(answer_id);
+
+  if (!answer.likes.includes(req.user.id)) {
+    return next(new CustomError("You can not  undo  this answer", 400));
+  }
+  const index = answer.likes.indexOf(req.user.id);
+  answer.likes.splice(index, 1);
+  await answer.save();
+
+  res.status(200).json({
+    success: true,
+    message: "UnLiked operations successfull",
+    data: answer,
+  });
+});
+
 module.exports = {
   addNewAnswer,
   getAllAnswers,
   getSingleAnswer,
   editAnswer,
+  deleteAnswer,
+  likeAnswer,
+  undoLikeAnswer,
 };

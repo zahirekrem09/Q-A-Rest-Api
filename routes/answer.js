@@ -7,6 +7,9 @@ const {
   getAllAnswers,
   getSingleAnswer,
   editAnswer,
+  deleteAnswer,
+  undoLikeAnswer,
+  likeAnswer,
 } = require("../controllers/answer");
 
 // mergePrams öncekş route deki paramsları getirmek için
@@ -22,6 +25,24 @@ router.put(
   getAccessToRoute,
   getAnswerOwnerAccess,
   editAnswer
+);
+router.delete(
+  "/:answer_id/delete",
+  checkAnswerQuestionExist,
+  getAccessToRoute,
+  getAnswerOwnerAccess,
+  deleteAnswer
+);
+
+router.get(
+  "/:answer_id/like",
+  [checkAnswerQuestionExist, getAccessToRoute],
+  likeAnswer
+);
+router.get(
+  "/:answer_id/undo_like",
+  [checkAnswerQuestionExist, getAccessToRoute],
+  undoLikeAnswer
 );
 
 module.exports = router;
