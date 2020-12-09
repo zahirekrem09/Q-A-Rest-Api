@@ -1,6 +1,7 @@
 const Question = require("../models/Question");
 const Answer = require("../models/Answer");
 const asyncErrorWrapper = require("express-async-handler");
+
 const CustomError = require("../helpers/error/CustomError");
 
 const addNewAnswer = asyncErrorWrapper(async (req, res, next) => {
@@ -37,7 +38,26 @@ const getAllAnswers = asyncErrorWrapper(async (req, res, next) => {
   });
 });
 
+const getSingleAnswer = asyncErrorWrapper(async (req, res, next) => {
+  const { answer_id } = req.params;
+
+  const answer = await Answer.findById(answer_id)
+    .populate({
+      path: "question",
+      select: "title",
+    })
+    .populate({
+      path: "user",
+      select: "name profile_image",
+    });
+  return res.status(200).json({
+    success: true,
+    data: answer,
+  });
+});
+
 module.exports = {
   addNewAnswer,
   getAllAnswers,
+  getSingleAnswer,
 };
