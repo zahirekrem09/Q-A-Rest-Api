@@ -18,6 +18,11 @@ const askNewQuestions = asyncErrorWrapper(async (req, res, next) => {
 
 const getAllQuestions = asyncErrorWrapper(async (req, res, next) => {
   let query = Question.find();
+  const populate = true;
+  const populateValue = {
+    path: "user",
+    select: "name profile_image",
+  };
   if (req.query.search) {
     const searchObject = {};
 
@@ -26,6 +31,34 @@ const getAllQuestions = asyncErrorWrapper(async (req, res, next) => {
     searchObject["title"] = regex;
     query = query.where(searchObject);
   }
+
+  if (populate) {
+    query = query.populate(populateValue);
+  }
+
+  //paginate
+  const total = await Question.countDocuments();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit; // end page
+  const pagination = {};
+
+  if (startIndex > 0) {
+    pagination.previous = {
+      page: page - 1,
+      limit: limit,
+    };
+  }
+  if (endIndex < total) {
+    pagination.next = {
+      page: page + 1,
+      limit: limit,
+    };
+  }
+  query = query.skip(startIndex).limit(limit);
+
   const questions = await query;
 
   // filter search TODO:
@@ -35,6 +68,8 @@ const getAllQuestions = asyncErrorWrapper(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: questions,
+    count: questions.length,
+    pagination: pagination,
   });
 });
 
