@@ -12,7 +12,8 @@ const searchHelper = (searchKey, query, req) => {
 };
 
 const populateHelper = (query, population) => {
-  return (query = query.populate(population));
+  //console.log(query);
+  return query.populate(population);
 };
 
 const sortHelper = (query, req) => {

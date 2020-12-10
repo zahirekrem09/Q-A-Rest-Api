@@ -33,7 +33,18 @@ router.post("/ask", getAccessToRoute, askNewQuestions);
 router.get(
   "/:id",
   checkQuestionExist,
-  answerQuery(Question),
+  answerQuery(Question, {
+    population: [
+      {
+        path: "user",
+        select: "name profil_image",
+      },
+      {
+        path: "answers",
+        select: "content",
+      },
+    ],
+  }),
   getSingleQuestion
 );
 router.put(
