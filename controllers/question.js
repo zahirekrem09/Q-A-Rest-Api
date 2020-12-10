@@ -59,6 +59,19 @@ const getAllQuestions = asyncErrorWrapper(async (req, res, next) => {
   }
   query = query.skip(startIndex).limit(limit);
 
+  // sorting req.query.sortBy
+
+  const sortKey = req.query.sortBy;
+
+  if (sortKey === "most-answered") {
+    query = query.sort("-answerCount -createdAt");
+  }
+  if (sortKey === "most-liked") {
+    query = query.sort("-likeCount -createdAt");
+  } else {
+    query = query.sort("-createdAt");
+  }
+
   const questions = await query;
 
   // filter search TODO:
@@ -116,6 +129,7 @@ const likeQuestion = asyncErrorWrapper(async (req, res, next) => {
     return next(new CustomError("You already liked this question", 400));
   }
   question.likes.push(req.user.id);
+  question.likeCount = question.likes.length;
   await question.save();
 
   res.status(200).json({
@@ -135,6 +149,7 @@ const undoLikeQuestion = asyncErrorWrapper(async (req, res, next) => {
   }
   const index = question.likes.indexOf(req.user.id);
   question.likes.splice(index, 1);
+  question.likeCount = question.likes.length;
   await question.save();
 
   res.status(200).json({
