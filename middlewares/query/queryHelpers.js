@@ -27,9 +27,9 @@ const sortHelper = (query, req) => {
   return (query = query.sort("-createdAt"));
 };
 
-const paginationHelper = async (model, query, req) => {
+const paginationHelper = async (totalDocuments, query, req) => {
   //paginate
-  const total = await model.countDocuments();
+  const total = totalDocuments;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
 
@@ -50,8 +50,11 @@ const paginationHelper = async (model, query, req) => {
     };
   }
   return {
-    query: query.skip(startIndex).limit(limit),
+    query:
+      query === undefined ? undefined : query.skip(startIndex).limit(limit),
     pagination: pagination,
+    startIndex,
+    limit,
   };
 };
 

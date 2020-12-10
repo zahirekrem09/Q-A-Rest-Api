@@ -8,7 +8,8 @@ const userQuery = function (model, options) {
     //Search
     query = searchHelper("name", query, req);
     // pagination
-    const paginationResult = await paginationHelper(model, query, req);
+    const total = await model.countDocuments();
+    const paginationResult = await paginationHelper(total, query, req);
     query = paginationResult.query;
     const pagination = paginationResult.pagination;
 

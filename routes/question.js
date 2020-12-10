@@ -2,6 +2,7 @@ const express = require("express");
 const Question = require("../models/Question");
 const answer = require("./answer");
 const questionQuery = require("../middlewares/query/questionQuery");
+const answerQuery = require("../middlewares/query/answerQuery");
 const getAccessToRoute = require("../middlewares/auth/getAccessToRoute");
 const getQuestionOwnerAccess = require("../middlewares/auth/getQuestionOwnerAccess");
 const checkQuestionExist = require("../middlewares/db/checkQuestionExist");
@@ -29,7 +30,12 @@ router.get(
   getAllQuestions
 );
 router.post("/ask", getAccessToRoute, askNewQuestions);
-router.get("/:id", checkQuestionExist, getSingleQuestion);
+router.get(
+  "/:id",
+  checkQuestionExist,
+  answerQuery(Question),
+  getSingleQuestion
+);
 router.put(
   "/:id/edit",
   [getAccessToRoute, checkQuestionExist, getQuestionOwnerAccess],
