@@ -1,23 +1,12 @@
 const asyncErrorWrapper = require("express-async-handler");
-const {
-  searchHelper,
-  populateHelper,
-  sortHelper,
-  paginationHelper,
-} = require("./queryHelpers");
+const { searchHelper, paginationHelper } = require("./queryHelpers");
 
-const questionQuery = function (model, options) {
+const userQuery = function (model, options) {
   return asyncErrorWrapper(async function (req, res, next) {
     // initial query;
     let query = model.find();
     //Search
-    query = searchHelper("title", query, req);
-    // populate
-    if (options && options.population) {
-      query = populateHelper(query, options.population);
-    }
-    // sorting
-    query = sortHelper(query, req);
+    query = searchHelper("name", query, req);
     // pagination
     const paginationResult = await paginationHelper(model, query, req);
     query = paginationResult.query;
@@ -36,4 +25,4 @@ const questionQuery = function (model, options) {
   });
 };
 
-module.exports = questionQuery;
+module.exports = userQuery;
